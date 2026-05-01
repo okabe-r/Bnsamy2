@@ -430,11 +430,19 @@
 </header>
 
 <div class="controls-bar">
-  <div class="search-wrap">
-    <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input class="search-input" id="searchInput" type="search" placeholder="ابحث في المقالات..." />
+  <div style="display:flex; align-items:center; gap:14px; flex:1; flex-wrap:wrap;">
+    <div class="search-wrap">
+      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" id="searchInput" type="search" placeholder="ابحث في المقالات..." />
+    </div>
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="font-family:'Cairo',sans-serif;font-size:13px;color:var(--text-secondary);font-weight:700;">تصفية:</span>
+      <button class="chip" id="advancedCatBtn">التصنيفات</button>
+      <button class="chip" id="advancedDateBtn">التاريخ</button>
+      <button class="chip" id="advancedTagsBtn">الوسوم</button>
+      <button class="chip" id="clearFilterBtn" style="display:none; color:var(--gold); border-color:var(--gold);">إلغاء التصفية ✕</button>
+    </div>
   </div>
-  <div class="filter-chips" id="filterChips"></div>
   <span class="results-count" id="resultsCount"></span>
 </div>
 
@@ -448,16 +456,22 @@
   </main>
   <aside class="sidebar">
     <div class="sidebar-widget">
-      <div class="widget-title">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
-        التصنيفات
+      <div class="widget-title" style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="display: flex; align-items: center; gap: 8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+          التصنيفات
+        </span>
+        <button id="showAllCatsBtn" style="background: none; border: none; color: var(--gold); font-family: 'Cairo', sans-serif; font-size: 11px; cursor: pointer; text-decoration: underline; padding: 0;">اعرض كل التصنيفات</button>
       </div>
       <div class="widget-body"><ul class="category-list" id="categoryList"></ul></div>
     </div>
     <div class="sidebar-widget">
-      <div class="widget-title">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-        الوسوم
+      <div class="widget-title" style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="display: flex; align-items: center; gap: 8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          الوسوم
+        </span>
+        <button id="showAllTagsBtn" style="background: none; border: none; color: var(--gold); font-family: 'Cairo', sans-serif; font-size: 11px; cursor: pointer; text-decoration: underline; padding: 0;">اعرض كل الوسوم</button>
       </div>
       <div class="widget-body"><div class="tag-cloud" id="tagCloud"></div></div>
     </div>
@@ -488,6 +502,99 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="catsModalOverlay" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width: 600px;">
+    <div class="modal-topbar">
+      <span class="modal-category" style="font-size: 14px;">كل التصنيفات</span>
+      <button class="modal-close" id="catsModalClose" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="modal-content" style="padding-top: 24px;">
+      <ul class="category-list" id="allCatsList"></ul>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="tagsModalOverlay" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width: 600px;">
+    <div class="modal-topbar">
+      <span class="modal-category" style="font-size: 14px;">كل الوسوم</span>
+      <button class="modal-close" id="tagsModalClose" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="modal-content" style="padding-top: 24px;">
+      <div class="tag-cloud" id="allTagsCloud"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="advCatsModalOverlay" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width: 500px;">
+    <div class="modal-topbar">
+      <span class="modal-category" style="font-size: 14px;">تصفية التصنيفات</span>
+      <button class="modal-close" id="advCatsModalClose" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="modal-content" style="padding-top: 24px;">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div>
+          <label style="display:block; font-size:13px; color:var(--text-muted); margin-bottom:6px;">التصنيفات الأساسية</label>
+          <select id="advMainCat" class="search-input" style="width:100%; border-radius:8px; color:var(--text-primary); background:var(--glass-1);">
+            <option value="" style="color:black;">الكل</option>
+          </select>
+        </div>
+        
+        <div style="text-align:center;">
+          <select id="advLogic" class="search-input" style="width:auto; display:inline-block; border-radius:8px; padding:6px 12px; height:auto; color:var(--text-primary); background:var(--glass-1);">
+            <option value="OR" style="color:black;">أو (OR)</option>
+            <option value="AND" style="color:black;">و (AND)</option>
+          </select>
+        </div>
+        
+        <div>
+          <label style="display:block; font-size:13px; color:var(--text-muted); margin-bottom:6px;">التصنيفات الفرعية</label>
+          <select id="advSubCat" class="search-input" style="width:100%; border-radius:8px; color:var(--text-primary); background:var(--glass-1);">
+            <option value="" style="color:black;">الكل</option>
+          </select>
+        </div>
+        
+        <button id="applyAdvCatsBtn" class="telegram-btn" style="width:100%; justify-content:center; margin-top:8px;">تطبيق التصفية</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="advDateModalOverlay" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width: 400px;">
+    <div class="modal-topbar">
+      <span class="modal-category" style="font-size: 14px;">تصفية بالتاريخ</span>
+      <button class="modal-close" id="advDateModalClose" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="modal-content" style="padding-top: 24px;">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="display:flex; gap:12px;">
+          <select id="advYear" class="search-input" style="flex:1; border-radius:8px; color:var(--text-primary); background:var(--glass-1);">
+            <option value="" style="color:black;">السنة</option>
+          </select>
+          <select id="advMonth" class="search-input" style="flex:1; border-radius:8px; color:var(--text-primary); background:var(--glass-1);">
+            <option value="" style="color:black;">الشهر</option>
+            <option value="01" style="color:black;">يناير</option>
+            <option value="02" style="color:black;">فبراير</option>
+            <option value="03" style="color:black;">مارس</option>
+            <option value="04" style="color:black;">أبريل</option>
+            <option value="05" style="color:black;">مايو</option>
+            <option value="06" style="color:black;">يونيو</option>
+            <option value="07" style="color:black;">يوليو</option>
+            <option value="08" style="color:black;">أغسطس</option>
+            <option value="09" style="color:black;">سبتمبر</option>
+            <option value="10" style="color:black;">أكتوبر</option>
+            <option value="11" style="color:black;">نوفمبر</option>
+            <option value="12" style="color:black;">ديسمبر</option>
+          </select>
+        </div>
+        <button id="applyAdvDateBtn" class="telegram-btn" style="width:100%; justify-content:center; margin-top:8px;">تطبيق التصفية</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>
   <p>مدوّنة ابن سامي · <a href="https://t.me/BnSamyPosts" target="_blank">@BnSamyPosts</a></p>
   <p style="margin-top:6px;font-size:11px;opacity:0.4;">لإضافة مقالات جديدة، أضفها في نهاية ملف posts.json باتباع نفس التنسيق</p>
@@ -500,6 +607,7 @@ const EMBEDDED_POSTS = [
 ];
 
 let allPosts=[],activeCategory='all',activeTag=null,searchQuery='';
+let advMainCatVal='', advSubCatVal='', advLogicVal='OR', advYearVal='', advMonthVal='';
 
 async function init(){
   try{const r=await fetch('posts.json');if(r.ok)allPosts=await r.json();else throw 0;}
@@ -514,38 +622,81 @@ async function init(){
   }));
 
   allPosts.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  buildFilterChips();buildCategoryList();buildTagCloud();renderArticles();
+  populateAdvSelects();buildCategoryList();buildTagCloud();refresh();
   document.getElementById('today-date').textContent=new Date().toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 
 function fmt(d){return new Date(d).toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'});}
 function getCats(){const m={};allPosts.forEach(p=>{m[p.category]=(m[p.category]||0)+1;});return m;}
 function getTags(){const m={};allPosts.forEach(p=>p.tags.forEach(t=>{m[t]=(m[t]||0)+1;}));return m;}
+
 function filtered(){
   return allPosts.filter(p=>{
-    const c=activeCategory==='all'||p.category===activeCategory||p.subcategories.includes(activeCategory);
-    const t=!activeTag||p.tags.includes(activeTag);
+    let c = true;
+    if(advMainCatVal || advSubCatVal) {
+      const matchMain = advMainCatVal ? p.category === advMainCatVal : false;
+      const matchSub = advSubCatVal ? (p.subcategories&&p.subcategories.includes(advSubCatVal)) : false;
+      
+      if (advMainCatVal && advSubCatVal) {
+        if (advMainCatVal === advSubCatVal) {
+           c = matchMain;
+        } else {
+           c = advLogicVal === 'AND' ? (matchMain && matchSub) : (matchMain || matchSub);
+        }
+      } else {
+        c = advMainCatVal ? matchMain : matchSub;
+      }
+    } else {
+      c = activeCategory==='all'||p.category===activeCategory||(p.subcategories&&p.subcategories.includes(activeCategory));
+    }
+    
+    const t=!activeTag||(p.tags&&p.tags.includes(activeTag));
+    const matchYear = !advYearVal || (p.date && p.date.startsWith(advYearVal));
+    const matchMonth = !advMonthVal || (p.date && p.date.substring(5,7) === advMonthVal);
+    const d=matchYear && matchMonth;
     const q=searchQuery.trim().toLowerCase();
-    const s=!q||(p.title&&p.title.toLowerCase().includes(q))||(p.content&&p.content.toLowerCase().includes(q))||p.tags.some(x=>x.toLowerCase().includes(q));
-    return c&&t&&s;
+    const s=!q||(p.title&&p.title.toLowerCase().includes(q))||(p.content&&p.content.toLowerCase().includes(q))||(p.tags&&p.tags.some(x=>x.toLowerCase().includes(q)));
+    return c&&t&&d&&s;
   });
 }
 
-function refresh(){buildFilterChips();buildCategoryList();renderArticles();}
-
-function buildFilterChips(){
-  const cats=getCats(),el=document.getElementById('filterChips');el.innerHTML='';
-  el.appendChild(mkChip('الكل',activeCategory==='all',()=>{activeCategory='all';activeTag=null;refresh();}));
-  Object.keys(cats).forEach(c=>el.appendChild(mkChip(c,activeCategory===c,()=>{activeCategory=c;activeTag=null;refresh();})));
+function refresh(){
+  buildCategoryList();
+  renderArticles();
+  const clrBtn = document.getElementById('clearFilterBtn');
+  if(clrBtn) clrBtn.style.display = (advMainCatVal||advSubCatVal||advYearVal||advMonthVal||activeTag||activeCategory!=='all'||searchQuery)?'inline-block':'none';
 }
-function mkChip(l,a,fn){const e=document.createElement('button');e.className='chip'+(a?' active':'');e.textContent=l;e.onclick=fn;return e;}
+
+function populateAdvSelects() {
+  const mainCats = new Set(), subCats = new Set(), years = new Set();
+  allPosts.forEach(p => {
+    if(p.category) mainCats.add(p.category);
+    if(p.subcategories) p.subcategories.forEach(s => subCats.add(s));
+    if(p.date) years.add(p.date.substring(0,4));
+  });
+  const mainSel = document.getElementById('advMainCat');
+  const subSel = document.getElementById('advSubCat');
+  const yearSel = document.getElementById('advYear');
+  if(mainSel && subSel) {
+    mainSel.innerHTML = '<option value="" style="color:black;">الكل</option>';
+    subSel.innerHTML = '<option value="" style="color:black;">الكل</option>';
+    [...mainCats].forEach(c => mainSel.innerHTML += `<option value="${c}" style="color:black;">${c}</option>`);
+    [...subCats].forEach(c => subSel.innerHTML += `<option value="${c}" style="color:black;">${c}</option>`);
+  }
+  if(yearSel) {
+    yearSel.innerHTML = '<option value="" style="color:black;">السنة</option>';
+    [...years].sort((a,b)=>b-a).forEach(y => yearSel.innerHTML += `<option value="${y}" style="color:black;">${y}</option>`);
+  }
+}
 
 function buildCategoryList(){
   const cats=getCats(),list=document.getElementById('categoryList');list.innerHTML='';
   const all=document.createElement('li');all.className=activeCategory==='all'?'active':'';
   all.innerHTML=`<span class="cat-name">الكل</span><span class="cat-count">${allPosts.length}</span>`;
   all.onclick=()=>{activeCategory='all';activeTag=null;refresh();};list.appendChild(all);
-  Object.entries(cats).forEach(([c,n])=>{
+  
+  const sortedCats = Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0, 5);
+  sortedCats.forEach(([c,n])=>{
     const li=document.createElement('li');li.className=activeCategory===c?'active':'';
     li.innerHTML=`<span class="cat-name">${c}</span><span class="cat-count">${n}</span>`;
     li.onclick=()=>{activeCategory=c;activeTag=null;refresh();};list.appendChild(li);
@@ -554,7 +705,9 @@ function buildCategoryList(){
 
 function buildTagCloud(){
   const tags=getTags(),cloud=document.getElementById('tagCloud');cloud.innerHTML='';
-  Object.keys(tags).forEach(t=>{
+  const sortedTags = Object.entries(tags).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+  const top10 = sortedTags.slice(0, 10);
+  top10.forEach(t=>{
     const p=document.createElement('button');p.className='tag-cloud-pill'+(activeTag===t?' active':'');
     p.textContent=t;p.onclick=()=>{activeTag=activeTag===t?null:t;buildTagCloud();renderArticles();};cloud.appendChild(p);
   });
@@ -592,11 +745,113 @@ function openModal(post){
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';}
 document.getElementById('modalClose').onclick=closeModal;
 document.getElementById('modalOverlay').onclick=e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();};
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+function openTagsModal(){
+  const tags=getTags(),cloud=document.getElementById('allTagsCloud');cloud.innerHTML='';
+  const sortedTags = Object.entries(tags).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+  sortedTags.forEach(t=>{
+    const p=document.createElement('button');p.className='tag-cloud-pill'+(activeTag===t?' active':'');
+    p.textContent=t;p.onclick=()=>{activeTag=activeTag===t?null:t;buildTagCloud();renderArticles();closeTagsModal();};cloud.appendChild(p);
+  });
+  document.getElementById('tagsModalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeTagsModal(){document.getElementById('tagsModalOverlay').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('showAllTagsBtn').onclick=openTagsModal;
+document.getElementById('advancedTagsBtn').onclick=openTagsModal;
+document.getElementById('tagsModalClose').onclick=closeTagsModal;
+document.getElementById('tagsModalOverlay').onclick=e=>{if(e.target===document.getElementById('tagsModalOverlay'))closeTagsModal();};
+
+function openCatsModal(){
+  const cats=getCats(),list=document.getElementById('allCatsList');list.innerHTML='';
+  const sortedCats = Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  sortedCats.forEach(([c,n])=>{
+    const li=document.createElement('li');li.className=activeCategory===c?'active':'';
+    li.innerHTML=`<span class="cat-name">${c}</span><span class="cat-count">${n}</span>`;
+    li.onclick=()=>{activeCategory=c;activeTag=null;refresh();closeCatsModal();};list.appendChild(li);
+  });
+  document.getElementById('catsModalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeCatsModal(){document.getElementById('catsModalOverlay').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('showAllCatsBtn').onclick=openCatsModal;
+document.getElementById('catsModalClose').onclick=closeCatsModal;
+document.getElementById('catsModalOverlay').onclick=e=>{if(e.target===document.getElementById('catsModalOverlay'))closeCatsModal();};
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    closeModal();
+    closeTagsModal();
+    closeCatsModal();
+    if(typeof closeAdvModal === 'function') closeAdvModal();
+    if(typeof closeAdvDateModal === 'function') closeAdvDateModal();
+  }
+});
 
 let st;
 document.getElementById('searchInput').addEventListener('input',e=>{
-  clearTimeout(st);st=setTimeout(()=>{searchQuery=e.target.value;renderArticles();},250);
+  clearTimeout(st);st=setTimeout(()=>{searchQuery=e.target.value;refresh();},250);
+});
+
+document.getElementById('advancedDateBtn').addEventListener('click', () => {
+  const modal = document.getElementById('advDateModalOverlay');
+  if(modal) {
+    modal.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+});
+
+document.getElementById('advDateModalClose').addEventListener('click', closeAdvDateModal);
+function closeAdvDateModal() {
+  document.getElementById('advDateModalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+document.getElementById('applyAdvDateBtn').addEventListener('click', () => {
+  advYearVal = document.getElementById('advYear').value;
+  advMonthVal = document.getElementById('advMonth').value;
+  refresh();
+  closeAdvDateModal();
+});
+
+document.getElementById('advDateModalOverlay').addEventListener('click', (e) => {
+  if(e.target === document.getElementById('advDateModalOverlay')) closeAdvDateModal();
+});
+
+document.getElementById('advancedCatBtn').addEventListener('click', () => {
+  const modal = document.getElementById('advCatsModalOverlay');
+  if(modal) {
+    modal.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+});
+
+document.getElementById('advCatsModalClose').addEventListener('click', closeAdvModal);
+function closeAdvModal() {
+  document.getElementById('advCatsModalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+document.getElementById('applyAdvCatsBtn').addEventListener('click', () => {
+  advMainCatVal = document.getElementById('advMainCat').value;
+  advSubCatVal = document.getElementById('advSubCat').value;
+  advLogicVal = document.getElementById('advLogic').value;
+  activeCategory = 'all'; // reset sidebar active if applying advanced
+  refresh();
+  closeAdvModal();
+});
+
+document.getElementById('clearFilterBtn').addEventListener('click', () => {
+  advMainCatVal=''; advSubCatVal=''; advLogicVal='OR'; advYearVal=''; advMonthVal=''; activeTag=null; activeCategory='all'; searchQuery='';
+  document.getElementById('searchInput').value='';
+  if(document.getElementById('advYear')) document.getElementById('advYear').value='';
+  if(document.getElementById('advMonth')) document.getElementById('advMonth').value='';
+  document.getElementById('advMainCat').value='';
+  document.getElementById('advSubCat').value='';
+  refresh();
+});
+
+document.getElementById('advCatsModalOverlay').addEventListener('click', (e) => {
+  if(e.target === document.getElementById('advCatsModalOverlay')) closeAdvModal();
 });
 
 init();
