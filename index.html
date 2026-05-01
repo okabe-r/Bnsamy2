@@ -504,6 +504,15 @@ let allPosts=[],activeCategory='all',activeTag=null,searchQuery='';
 async function init(){
   try{const r=await fetch('posts.json');if(r.ok)allPosts=await r.json();else throw 0;}
   catch{allPosts=EMBEDDED_POSTS;}
+  
+  // Normalize posts schema
+  allPosts = allPosts.map(p => ({
+    ...p,
+    category: p.category || p.mainCategory || 'غير مصنف',
+    subcategories: p.subcategories || p.subCategories || [],
+    tags: p.tags || []
+  }));
+
   allPosts.sort((a,b)=>new Date(b.date)-new Date(a.date));
   buildFilterChips();buildCategoryList();buildTagCloud();renderArticles();
   document.getElementById('today-date').textContent=new Date().toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
@@ -517,7 +526,7 @@ function filtered(){
     const c=activeCategory==='all'||p.category===activeCategory||p.subcategories.includes(activeCategory);
     const t=!activeTag||p.tags.includes(activeTag);
     const q=searchQuery.trim().toLowerCase();
-    const s=!q||p.title.toLowerCase().includes(q)||p.content.toLowerCase().includes(q)||p.tags.some(x=>x.toLowerCase().includes(q));
+    const s=!q||(p.title&&p.title.toLowerCase().includes(q))||(p.content&&p.content.toLowerCase().includes(q))||p.tags.some(x=>x.toLowerCase().includes(q));
     return c&&t&&s;
   });
 }
