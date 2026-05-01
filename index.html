@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مدوّنة ابن سامي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep:    #060b18;
+      --glass-1:    rgba(255,255,255,0.06);
+      --glass-2:    rgba(255,255,255,0.10);
+      --glass-border: rgba(255,255,255,0.13);
+      --glass-border-bright: rgba(255,255,255,0.26);
+      --text-primary:   #f0eee8;
+      --text-secondary: rgba(240,238,232,0.65);
+      --text-muted:     rgba(240,238,232,0.38);
+      --gold:      #f0b95a;
+      --gold-dim:  rgba(240,185,90,0.16);
+      --gold-glow: rgba(240,185,90,0.35);
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --blur-md:   blur(20px);
+      --shadow-glass: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.10);
+      --shadow-lift:  0 20px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.16);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── SCENE ── */
+    .scene {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,180,160,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(99,102,241,0.20) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 60% at 60% 90%, rgba(251,113,133,0.13) 0%, transparent 60%),
+        radial-gradient(ellipse 90% 70% at 10% 80%, rgba(251,191,36,0.10) 0%, transparent 65%),
+        linear-gradient(135deg, #060b18 0%, #0c1630 50%, #080d1e 100%);
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      animation: drift linear infinite;
+      will-change: transform;
+    }
+    .orb-1 { width:520px;height:520px;background:rgba(0,210,180,0.20);top:-10%;left:-8%;animation-duration:28s; }
+    .orb-2 { width:680px;height:680px;background:rgba(99,102,241,0.18);top:5%;right:-15%;animation-duration:36s;animation-delay:-12s; }
+    .orb-3 { width:400px;height:400px;background:rgba(251,113,133,0.13);bottom:10%;left:20%;animation-duration:24s;animation-delay:-8s; }
+    .orb-4 { width:300px;height:300px;background:rgba(251,191,36,0.12);bottom:20%;right:10%;animation-duration:32s;animation-delay:-20s; }
+    @keyframes drift {
+      0%  { transform: translate(0,0) scale(1); }
+      25% { transform: translate(40px,-30px) scale(1.05); }
+      50% { transform: translate(-20px,50px) scale(0.95); }
+      75% { transform: translate(-50px,-20px) scale(1.03); }
+      100%{ transform: translate(0,0) scale(1); }
+    }
+
+    /* ── HEADER ── */
+    header { position:relative; z-index:10; padding:0 40px; }
+    .masthead-top {
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.07);
+      font-size:12px;color:var(--text-muted);
+    }
+    .telegram-link {
+      display:flex;align-items:center;gap:7px;
+      color:var(--gold);text-decoration:none;font-size:13px;font-weight:600;transition:opacity 0.2s;
+    }
+    .telegram-link:hover { opacity:0.7; }
+    .masthead-main { text-align:center;padding:64px 20px 52px; }
+    .site-eyebrow {
+      font-family:'Cairo',sans-serif;font-size:11px;letter-spacing:0.4em;
+      color:var(--gold);text-transform:uppercase;margin-bottom:18px;
+      display:flex;align-items:center;justify-content:center;gap:14px;
+      opacity:0;animation:fadeIn 0.8s 0.2s ease forwards;
+    }
+    .site-eyebrow::before,.site-eyebrow::after {
+      content:'';width:60px;height:1px;
+      background:linear-gradient(to left,var(--gold),transparent);
+    }
+    .site-eyebrow::after { background:linear-gradient(to right,var(--gold),transparent); }
+    .site-title {
+      font-family:'Amiri',serif;
+      font-size:clamp(54px,10vw,108px);
+      font-weight:700;line-height:1;color:var(--text-primary);
+      opacity:0;animation:slideUp 0.9s 0.35s cubic-bezier(0.23,1,0.32,1) forwards;
+    }
+    .site-title em {
+      font-style:normal;
+      background:linear-gradient(135deg,var(--gold) 0%,#ffd98a 50%,var(--gold) 100%);
+      -webkit-background-clip:text;background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .site-desc {
+      margin-top:16px;font-size:15px;font-weight:300;
+      color:var(--text-secondary);letter-spacing:0.06em;
+      opacity:0;animation:fadeIn 0.8s 0.6s ease forwards;
+    }
+    .hero-badges {
+      display:flex;justify-content:center;gap:10px;margin-top:30px;flex-wrap:wrap;
+      opacity:0;animation:fadeIn 0.8s 0.75s ease forwards;
+    }
+    .hero-badge {
+      display:inline-flex;align-items:center;gap:7px;
+      padding:7px 16px;border-radius:100px;font-size:12px;font-weight:600;
+      color:var(--text-secondary);
+      background:var(--glass-1);border:1px solid var(--glass-border);
+      backdrop-filter:blur(10px);
+    }
+    .badge-dot {
+      width:6px;height:6px;border-radius:50%;
+      background:var(--gold);box-shadow:0 0 6px var(--gold-glow);
+    }
+    .shimmer-line {
+      width:100%;height:1px;position:relative;overflow:hidden;
+      background:linear-gradient(to left,transparent,rgba(240,185,90,0.3) 20%,rgba(240,185,90,0.7) 50%,rgba(240,185,90,0.3) 80%,transparent);
+    }
+    .shimmer-line::after {
+      content:'';position:absolute;inset:0;width:30%;
+      background:linear-gradient(to left,transparent,rgba(255,255,255,0.9),transparent);
+      animation:shimmerMove 3s ease-in-out infinite;
+    }
+    @keyframes shimmerMove { 0%{transform:translateX(400%)} 100%{transform:translateX(-400%)} }
+
+    /* ── CONTROLS ── */
+    .controls-bar {
+      position:sticky;top:0;z-index:100;
+      backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+      background:rgba(6,11,24,0.65);
+      border-bottom:1px solid var(--glass-border);
+      padding:14px 40px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    }
+    .search-wrap { position:relative;flex:1;min-width:200px;max-width:340px; }
+    .search-icon {
+      position:absolute;right:14px;top:50%;transform:translateY(-50%);
+      color:var(--text-muted);pointer-events:none;
+    }
+    .search-input {
+      width:100%;padding:10px 42px 10px 16px;
+      background:var(--glass-1);border:1px solid var(--glass-border);border-radius:10px;
+      font-family:'Cairo',sans-serif;font-size:14px;color:var(--text-primary);
+      outline:none;transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;
+      backdrop-filter:blur(8px);
+    }
+    .search-input::placeholder { color:var(--text-muted); }
+    .search-input:focus {
+      border-color:rgba(240,185,90,0.5);background:var(--glass-2);
+      box-shadow:0 0 0 3px rgba(240,185,90,0.10);
+    }
+    .filter-chips { display:flex;gap:8px;flex-wrap:wrap;flex:1; }
+    .chip {
+      padding:7px 15px;border-radius:100px;
+      font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;
+      cursor:pointer;border:1px solid var(--glass-border);
+      background:var(--glass-1);color:var(--text-secondary);
+      backdrop-filter:blur(8px);transition:all 0.2s;white-space:nowrap;
+    }
+    .chip:hover { border-color:rgba(240,185,90,0.4);color:var(--gold);background:var(--glass-2); }
+    .chip.active {
+      background:var(--gold-dim);border-color:rgba(240,185,90,0.5);color:var(--gold);
+      box-shadow:0 0 12px rgba(240,185,90,0.14);
+    }
+    .results-count { font-family:'Cairo',sans-serif;font-size:13px;color:var(--text-muted);white-space:nowrap; }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display:grid;grid-template-columns:1fr 270px;gap:28px;
+      max-width:1200px;margin:0 auto;padding:40px 24px;position:relative;z-index:1;
+    }
+    .section-label { display:flex;align-items:center;gap:12px;margin-bottom:24px; }
+    .section-label h2 { font-family:'Amiri',serif;font-size:20px;color:var(--text-primary);white-space:nowrap; }
+    .section-label-line { flex:1;height:1px;background:linear-gradient(to left,transparent,var(--glass-border)); }
+    .articles-grid { display:grid;gap:20px; }
+
+    /* ── CARDS ── */
+    .article-card {
+      background:var(--glass-1);
+      backdrop-filter:var(--blur-md);-webkit-backdrop-filter:var(--blur-md);
+      border:1px solid var(--glass-border);border-radius:var(--radius-md);
+      overflow:hidden;cursor:pointer;
+      transition:transform 0.3s cubic-bezier(0.23,1,0.32,1),box-shadow 0.3s,border-color 0.3s,background 0.3s;
+      animation:cardIn 0.6s ease both;position:relative;
+    }
+    .article-card::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(to left,transparent,rgba(255,255,255,0.22),transparent);
+      pointer-events:none;
+    }
+    .article-card::after {
+      content:'';position:absolute;top:24px;right:0;
+      width:3px;height:calc(100% - 48px);
+      background:linear-gradient(to bottom,transparent,var(--gold),transparent);
+      opacity:0;transition:opacity 0.3s;border-radius:4px 0 0 4px;
+    }
+    .article-card:hover {
+      transform:translateY(-5px) scale(1.005);
+      box-shadow:var(--shadow-lift),0 0 40px rgba(240,185,90,0.07);
+      border-color:rgba(240,185,90,0.28);background:var(--glass-2);
+    }
+    .article-card:hover::after { opacity:1; }
+    @keyframes cardIn { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+    .card-header { padding:22px 22px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:10px; }
+    .card-category-badge {
+      background:var(--gold-dim);color:var(--gold);
+      font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;
+      padding:4px 12px;border-radius:100px;letter-spacing:0.05em;
+      border:1px solid rgba(240,185,90,0.22);white-space:nowrap;
+    }
+    .card-date { font-family:'Cairo',sans-serif;font-size:12px;color:var(--text-muted);white-space:nowrap; }
+    .card-body { padding:14px 22px 18px; }
+    .card-title {
+      font-family:'Amiri',serif;font-size:21px;font-weight:700;
+      color:var(--text-primary);line-height:1.5;margin-bottom:10px;transition:color 0.2s;
+    }
+    .article-card:hover .card-title { color:var(--gold); }
+    .card-excerpt {
+      font-family:'Cairo',sans-serif;font-size:14px;color:var(--text-secondary);
+      line-height:1.85;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+    }
+    .card-footer {
+      padding:13px 22px;border-top:1px solid rgba(255,255,255,0.05);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      background:rgba(0,0,0,0.08);
+    }
+    .card-tags { display:flex;gap:6px;flex-wrap:wrap; }
+    .tag-pill {
+      font-family:'Cairo',sans-serif;font-size:11px;
+      background:rgba(255,255,255,0.04);color:var(--text-muted);
+      padding:3px 9px;border-radius:100px;cursor:pointer;transition:all 0.18s;
+      border:1px solid rgba(255,255,255,0.07);
+    }
+    .tag-pill:hover { background:var(--gold-dim);color:var(--gold);border-color:rgba(240,185,90,0.22); }
+    .card-read-btn {
+      display:flex;align-items:center;gap:5px;
+      font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;
+      color:var(--gold);white-space:nowrap;opacity:0.75;transition:opacity 0.2s;
+    }
+    .article-card:hover .card-read-btn { opacity:1; }
+
+    /* ── SIDEBAR ── */
+    .sidebar { position:sticky;top:76px;height:fit-content;display:flex;flex-direction:column;gap:18px; }
+    .sidebar-widget {
+      background:var(--glass-1);backdrop-filter:var(--blur-md);-webkit-backdrop-filter:var(--blur-md);
+      border:1px solid var(--glass-border);border-radius:var(--radius-md);overflow:hidden;position:relative;
+    }
+    .sidebar-widget::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(to left,transparent,rgba(255,255,255,0.18),transparent);pointer-events:none;
+    }
+    .widget-title {
+      font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;
+      padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);
+      color:var(--gold);letter-spacing:0.06em;display:flex;align-items:center;gap:8px;
+      background:rgba(240,185,90,0.04);
+    }
+    .widget-body { padding:14px 18px; }
+    .category-list { list-style:none; }
+    .category-list li {
+      display:flex;align-items:center;justify-content:space-between;
+      padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);
+      cursor:pointer;transition:all 0.18s;
+    }
+    .category-list li:last-child { border-bottom:none; }
+    .cat-name { font-family:'Cairo',sans-serif;font-size:14px;font-weight:600;color:var(--text-secondary);transition:color 0.18s; }
+    .category-list li:hover .cat-name { color:var(--text-primary); }
+    .cat-count {
+      background:rgba(255,255,255,0.05);color:var(--text-muted);
+      font-size:11px;font-weight:700;padding:2px 9px;border-radius:100px;
+      border:1px solid rgba(255,255,255,0.06);
+    }
+    .category-list li.active .cat-name { color:var(--gold); }
+    .category-list li.active .cat-count { background:var(--gold-dim);color:var(--gold);border-color:rgba(240,185,90,0.22); }
+    .tag-cloud { display:flex;flex-wrap:wrap;gap:7px; }
+    .tag-cloud-pill {
+      font-family:'Cairo',sans-serif;font-size:12px;
+      background:rgba(255,255,255,0.04);color:var(--text-muted);
+      padding:5px 12px;border-radius:100px;cursor:pointer;transition:all 0.2s;
+      border:1px solid rgba(255,255,255,0.07);
+    }
+    .tag-cloud-pill:hover { background:var(--glass-2);color:var(--text-primary);border-color:var(--glass-border-bright); }
+    .tag-cloud-pill.active { background:var(--gold-dim);color:var(--gold);border-color:rgba(240,185,90,0.38);box-shadow:0 0 10px rgba(240,185,90,0.12); }
+
+    /* ── EMPTY ── */
+    .empty-state { text-align:center;padding:80px 40px;color:var(--text-muted); }
+    .empty-state .empty-icon { font-size:48px;margin-bottom:16px; }
+    .empty-state h3 { font-family:'Amiri',serif;font-size:22px;color:var(--text-secondary);margin-bottom:8px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position:fixed;inset:0;z-index:1000;
+      display:flex;align-items:flex-start;justify-content:center;
+      padding:24px 20px;overflow-y:auto;
+      opacity:0;pointer-events:none;transition:opacity 0.3s;
+    }
+    .modal-overlay::before {
+      content:'';position:fixed;inset:0;
+      background:rgba(4,8,20,0.80);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    }
+    .modal-overlay.open { opacity:1;pointer-events:all; }
+    .modal {
+      position:relative;
+      background:rgba(12,20,42,0.75);
+      backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+      border:1px solid var(--glass-border-bright);
+      border-radius:var(--radius-lg);max-width:780px;width:100%;margin:auto;
+      box-shadow:var(--shadow-lift);overflow:hidden;
+      transform:translateY(32px) scale(0.97);
+      transition:transform 0.4s cubic-bezier(0.23,1,0.32,1);
+    }
+    .modal::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;z-index:2;
+      background:linear-gradient(to left,transparent,rgba(255,255,255,0.32),transparent);pointer-events:none;
+    }
+    .modal-overlay.open .modal { transform:translateY(0) scale(1); }
+    .modal-topbar {
+      padding:20px 28px;display:flex;align-items:center;justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,0.07);background:rgba(240,185,90,0.04);
+    }
+    .modal-category { font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.15em;text-transform:uppercase; }
+    .modal-close {
+      background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;
+      color:var(--text-secondary);width:36px;height:36px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.18s;
+    }
+    .modal-close:hover { background:rgba(255,255,255,0.12);color:var(--text-primary); }
+    .modal-content { padding:32px 36px 40px; }
+    .modal-title { font-family:'Amiri',serif;font-size:clamp(24px,4vw,34px);font-weight:700;color:var(--text-primary);line-height:1.45;margin-bottom:18px; }
+    .modal-meta {
+      display:flex;align-items:center;gap:14px;margin-bottom:22px;
+      padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.07);flex-wrap:wrap;
+    }
+    .modal-date { font-family:'Cairo',sans-serif;font-size:13px;color:var(--text-muted); }
+    .modal-subcats { display:flex;gap:7px;flex-wrap:wrap; }
+    .subcat-badge {
+      font-family:'Cairo',sans-serif;font-size:11px;font-weight:600;
+      background:var(--glass-2);color:var(--text-secondary);
+      padding:3px 10px;border-radius:100px;border:1px solid var(--glass-border);
+    }
+    .modal-body { font-family:'Cairo',sans-serif;font-size:16px;line-height:2.1;color:var(--text-secondary);white-space:pre-line; }
+    .modal-footer {
+      margin-top:28px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.07);
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;
+    }
+    .modal-tags { display:flex;gap:7px;flex-wrap:wrap; }
+    .telegram-btn {
+      display:inline-flex;align-items:center;gap:8px;
+      background:var(--gold-dim);color:var(--gold);
+      font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;
+      padding:10px 22px;border-radius:10px;text-decoration:none;
+      border:1px solid rgba(240,185,90,0.28);transition:all 0.2s;backdrop-filter:blur(8px);
+    }
+    .telegram-btn:hover { background:rgba(240,185,90,0.24);box-shadow:0 0 20px rgba(240,185,90,0.14); }
+
+    /* ── FOOTER ── */
+    footer {
+      position:relative;z-index:1;text-align:center;padding:36px 20px;
+      border-top:1px solid rgba(255,255,255,0.07);
+      font-family:'Cairo',sans-serif;font-size:13px;color:var(--text-muted);
+    }
+    footer a { color:var(--gold);text-decoration:none; }
+    footer a:hover { opacity:0.7; }
+
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    @media(max-width:900px){
+      .layout{grid-template-columns:1fr;padding:24px 16px;gap:20px;}
+      .sidebar{position:static;flex-direction:row;flex-wrap:wrap;}
+      .sidebar-widget{flex:1;min-width:240px;}
+      .controls-bar{padding:12px 16px;}
+      header{padding:0 16px;}
+      .masthead-main{padding:48px 16px 44px;}
+    }
+    @media(max-width:600px){
+      .modal-content{padding:22px 18px 28px;}
+      .card-body{padding:12px 16px 16px;}
+      .card-header{padding:16px 16px 0;}
+      .card-footer{padding:11px 16px;}
+      .sidebar{flex-direction:column;}
+    }
+    ::-webkit-scrollbar{width:5px;height:5px;}
+    ::-webkit-scrollbar-track{background:var(--bg-deep);}
+    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.10);border-radius:3px;}
+    ::-webkit-scrollbar-thumb:hover{background:rgba(240,185,90,0.4);}
+  </style>
+</head>
+<body>
+
+<div class="scene" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<header>
+  <div class="masthead-top">
+    <span id="today-date" style="font-family:'Cairo',sans-serif"></span>
+    <a href="https://t.me/BnSamyPosts" target="_blank" class="telegram-link">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+      @BnSamyPosts
+    </a>
+  </div>
+  <div class="masthead-main">
+    <div class="site-eyebrow">تحليل · اقتصاد · شؤون دولية</div>
+    <h1 class="site-title">مدوّنة <em>ابن سامي</em></h1>
+    <p class="site-desc">مقالات وتحليلات في الاقتصاد والسياسة والشؤون الدولية</p>
+    <div class="hero-badges">
+      <span class="hero-badge"><span class="badge-dot"></span>اقتصاد</span>
+      <span class="hero-badge"><span class="badge-dot"></span>أعمال</span>
+      <span class="hero-badge"><span class="badge-dot"></span>شؤون دولية</span>
+    </div>
+  </div>
+  <div class="shimmer-line"></div>
+</header>
+
+<div class="controls-bar">
+  <div class="search-wrap">
+    <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input class="search-input" id="searchInput" type="search" placeholder="ابحث في المقالات..." />
+  </div>
+  <div class="filter-chips" id="filterChips"></div>
+  <span class="results-count" id="resultsCount"></span>
+</div>
+
+<div class="layout">
+  <main class="articles-section">
+    <div class="section-label">
+      <h2>أحدث المقالات</h2>
+      <div class="section-label-line"></div>
+    </div>
+    <div class="articles-grid" id="articlesGrid"></div>
+  </main>
+  <aside class="sidebar">
+    <div class="sidebar-widget">
+      <div class="widget-title">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+        التصنيفات
+      </div>
+      <div class="widget-body"><ul class="category-list" id="categoryList"></ul></div>
+    </div>
+    <div class="sidebar-widget">
+      <div class="widget-title">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        الوسوم
+      </div>
+      <div class="widget-body"><div class="tag-cloud" id="tagCloud"></div></div>
+    </div>
+  </aside>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-topbar">
+      <span class="modal-category" id="modalCategory"></span>
+      <button class="modal-close" id="modalClose" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="modal-content">
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <div class="modal-meta">
+        <span class="modal-date" id="modalDate"></span>
+        <div class="modal-subcats" id="modalSubcats"></div>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <div class="modal-tags" id="modalTags"></div>
+        <a class="telegram-btn" id="modalLink" href="#" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+          فتح في تيليجرام
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>مدوّنة ابن سامي · <a href="https://t.me/BnSamyPosts" target="_blank">@BnSamyPosts</a></p>
+  <p style="margin-top:6px;font-size:11px;opacity:0.4;">لإضافة مقالات جديدة، أضفها في نهاية ملف posts.json باتباع نفس التنسيق</p>
+</footer>
+
+<script>
+const EMBEDDED_POSTS = [
+  {id:4,title:"كيف تتهرب الشركات العالمية من الضرائب قانونيًا؟",date:"2020-05-27",link:"https://t.me/BnSamyPosts/4",category:"اقتصاد",subcategories:["أعمال","شؤون دولية"],tags:["ضرائب","شركات عالمية","ملاذات ضريبية","أبل","رأسمالية","هونج كونج","أيرلندا","الاتحاد الأوروبي","نصب قانوني"],excerpt:"إزاي الشركات العالمية بتهرب من الضرايب؟ أو بتدفع ضرايب لا تتناسب مع حجمها الحقيقي؟ كثير منا عارف ان الشركات الكبري حول الكوكب مش بتدفع ضرايب تذكر...",content:"إزاي الشركات العالمية بتهرب من الضرايب؟ أو بتدفع ضرايب لا تتناسب مع حجمها الحقيقي؟\n\nكثير منا عارف ان الشركات الكبري حول الكوكب مش بتدفع ضرايب تذكر؛ وأشهر طريقة استخدام ما يعرف بالملاذات الضريبية أو الـ Offshore بس دا بيحصل ازاي بقي فعليا؟\n\nتعالوا نتخيل مثالين\n\n✳️ نتخيل شركة ملابس؛ ليكن H&M أو أديداس أو نايكي... عندهم تي شيرت بيكلفهم 1.5$ بدون ما يدفعوا ضرايب أرباح يعملوا ايه؟\n\n1️⃣ يروحوا دول نامية فقيرة زي بنجلادش 🇧🇩 أو سريلانكا 🇱🇰 أو فيتنام 🇻🇳 بحيث ياخدوا خصومات ضريبية وعمالة رخيصة وكل التصنيع مش مكلف وهناك يعملوا التي شيرت دا بـ 1.5$.\n\n2️⃣ يروحوا هونج كونج 🇭🇰 اللي النظام الضريبي بتاعهم «الشركات المسجلة في هونج كونج لا تخضع للضرائب شريطة ألا تتم أية صفقات في هونج كونج» وبعدين الشركة تشتري التي شيرت من بنجلادش مقابل 2.0$.\n\n3️⃣ الشركة الأم في أمريكا 🇺🇸 تشتري التي شيرت من هونج كونج مقابل 18$ وتبيعه بـ 20$.\n\n── في وضع النصب دا:\n\nبنجلادش 🇧🇩: صنعت بـ 1.5$ = مفيش أرباح = مفيش ضرايب.\nأمريكا: اشتروا بـ 18$ وصرفوا 3$ = خسارة = مفيش ضرايب.\nهونج كونج 🇭🇰: كسبت 16$ لكن الصفقة لم تتم هناك = إعفاء ضريبي.\n\nإيه رأيكم في النصب القانوني دا!!!\n\n✳️✳️ شركة أبل\n\nأبل عاوزة تبيع في أوروبا فتختار ايرلندا 🇮🇪 وتقدملهم عرض: هنعمل عملياتنا في القارة من دولتك مقابل تخفيض ضريبي.\n\nقانون الاتحاد الأوروبي 🇪🇺 مفيهوش جمارك بين الدول وبكده أبل بتبيع في كل أوروبا وبتتحاسب ضريبي في ايرلندا بالنسبة المخفضة.\n\nسنة 2018 أبل باعت في بريطانيا بـ 1200 مليون استرليني ودفعت ضرائب 3.8 مليون فقط!\n\nفرنسا 🇫🇷 حاولت تفرض ضريبة على الشركات التقنية الأمريكية في 2019 وترامب هدد بعقوبات. في مارس 2020 غرّمت فرنسا أبل 1.23 مليار دولار.\n\nأمازون دفعت في 2017 و2018 للحكومة الأمريكية... 0 دولار ضرائب. وفي 2019 دفعوا 162 مليون على أرباح 13.9 مليار = 1.16% ضرائب فقط 😂\n\nدي بقي الرأسمالية العالمية الحالية."},
+  {id:7,title:"مقارنة بين صناعة السيارات في مصر والمغرب وتركيا",date:"2020-05-27",link:"https://t.me/BnSamyPosts/7",category:"اقتصاد",subcategories:["أعمال","شؤون دولية"],tags:["سيارات","مصر","السعودية","الإمارات","المغرب","تركيا","صناعة السيارات","أميك","تجميع محلي"],excerpt:"تعالوا نتكلم عن العربيات. تعرفوا إن سوق السيارات في مصر صغير قوي بالقياس بالعالم؟ دا سر إن الشركات الكبرى منفضة لمصر والتوكيلات تلعب بينا...",content:"تعالوا نتكلم عن العربيات 🚗\n\nتعرفوا إن سوق السيارات في مصر صغير قوي بالقياس بالعالم؟ دا سر إن الشركات الكبرى منفضة لمصر والتوكيلات تلعب بينا.\n\nأميك قال إننا بعنا في (يناير - فبراير - مارس) 2020 عدد 37 ألف عربية، قول 40 ألف بالمرصود والغير مرصود.\n\nعربية زي شيفورليه ماليبو باعت في نفس الفترة في أمريكا 35 ألف عربية لوحدها. وتويوتا كورولا باعت 69.2 ألف عربية.\n\n── المقارنة الإقليمية:\n\n🇸🇦 السوق السعودي في 2019: 542 ألف عربية.\n🇪🇬 السوق المصري: 127 ألف عربية.\n🇦🇪 الإمارات (أقل من 10 مليون نسمة): 243 ألف عربية.\n\nعشان كده لما بشوف شائعات «المصانع قفلت فالعربيات هتغلي» بقعد أضحك. إحنا سوق صغير قوي.\n\n── الأرقام المذهلة:\n\n🇲🇦 المغرب: تصنع ~700 ألف سيارة سنوياً وتصدر ~300 ألف لأوروبا!\n🇹🇷 تركيا: تصنع 1.5 مليون عربية سنوياً وتصدر بـ 30 مليار دولار.\n🇪🇬 مصر في 2019: 47.2 ألف عربية تجميع محلي فقط.\n\nوبالمناسبة سنة 2008:\n- مصر جمعت 77.5 ألف عربية.\n- المغرب أنتجت 41.7 ألف عربية.\n\nبعد 11 سنة:\n- مصر: نزلت من 77 إلى 47 ألف 📉\n- المغرب: زادت من 41 إلى 700 ألف 📈\n\nربنا يسهل ونشوف مصر دولة منتجة ومصدرة قوية؛ المغرب عملتها أهي يعني مش أشطر مننا."}
+];
+
+let allPosts=[],activeCategory='all',activeTag=null,searchQuery='';
+
+async function init(){
+  try{const r=await fetch('posts.json');if(r.ok)allPosts=await r.json();else throw 0;}
+  catch{allPosts=EMBEDDED_POSTS;}
+  allPosts.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  buildFilterChips();buildCategoryList();buildTagCloud();renderArticles();
+  document.getElementById('today-date').textContent=new Date().toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+
+function fmt(d){return new Date(d).toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'});}
+function getCats(){const m={};allPosts.forEach(p=>{m[p.category]=(m[p.category]||0)+1;});return m;}
+function getTags(){const m={};allPosts.forEach(p=>p.tags.forEach(t=>{m[t]=(m[t]||0)+1;}));return m;}
+function filtered(){
+  return allPosts.filter(p=>{
+    const c=activeCategory==='all'||p.category===activeCategory||p.subcategories.includes(activeCategory);
+    const t=!activeTag||p.tags.includes(activeTag);
+    const q=searchQuery.trim().toLowerCase();
+    const s=!q||p.title.toLowerCase().includes(q)||p.content.toLowerCase().includes(q)||p.tags.some(x=>x.toLowerCase().includes(q));
+    return c&&t&&s;
+  });
+}
+
+function refresh(){buildFilterChips();buildCategoryList();renderArticles();}
+
+function buildFilterChips(){
+  const cats=getCats(),el=document.getElementById('filterChips');el.innerHTML='';
+  el.appendChild(mkChip('الكل',activeCategory==='all',()=>{activeCategory='all';activeTag=null;refresh();}));
+  Object.keys(cats).forEach(c=>el.appendChild(mkChip(c,activeCategory===c,()=>{activeCategory=c;activeTag=null;refresh();})));
+}
+function mkChip(l,a,fn){const e=document.createElement('button');e.className='chip'+(a?' active':'');e.textContent=l;e.onclick=fn;return e;}
+
+function buildCategoryList(){
+  const cats=getCats(),list=document.getElementById('categoryList');list.innerHTML='';
+  const all=document.createElement('li');all.className=activeCategory==='all'?'active':'';
+  all.innerHTML=`<span class="cat-name">الكل</span><span class="cat-count">${allPosts.length}</span>`;
+  all.onclick=()=>{activeCategory='all';activeTag=null;refresh();};list.appendChild(all);
+  Object.entries(cats).forEach(([c,n])=>{
+    const li=document.createElement('li');li.className=activeCategory===c?'active':'';
+    li.innerHTML=`<span class="cat-name">${c}</span><span class="cat-count">${n}</span>`;
+    li.onclick=()=>{activeCategory=c;activeTag=null;refresh();};list.appendChild(li);
+  });
+}
+
+function buildTagCloud(){
+  const tags=getTags(),cloud=document.getElementById('tagCloud');cloud.innerHTML='';
+  Object.keys(tags).forEach(t=>{
+    const p=document.createElement('button');p.className='tag-cloud-pill'+(activeTag===t?' active':'');
+    p.textContent=t;p.onclick=()=>{activeTag=activeTag===t?null:t;buildTagCloud();renderArticles();};cloud.appendChild(p);
+  });
+}
+
+function renderArticles(){
+  const posts=filtered(),grid=document.getElementById('articlesGrid');
+  document.getElementById('resultsCount').textContent=`${posts.length} مقال`;
+  if(!posts.length){grid.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><h3>لا توجد نتائج</h3><p>جرّب تغيير معايير البحث أو التصفية</p></div>`;return;}
+  grid.innerHTML='';
+  posts.forEach((post,i)=>{
+    const card=document.createElement('article');card.className='article-card';card.style.animationDelay=`${i*70}ms`;
+    const tags=post.tags.slice(0,4).map(t=>`<span class="tag-pill" onclick="event.stopPropagation();filterTag('${t}')">${t}</span>`).join('');
+    card.innerHTML=`
+      <div class="card-header"><span class="card-category-badge">${post.category}</span><span class="card-date">${fmt(post.date)}</span></div>
+      <div class="card-body"><h2 class="card-title">${post.title}</h2><p class="card-excerpt">${post.excerpt||post.content.substring(0,180)+'...'}</p></div>
+      <div class="card-footer"><div class="card-tags">${tags}</div><span class="card-read-btn">اقرأ المزيد <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></span></div>`;
+    card.onclick=()=>openModal(post);grid.appendChild(card);
+  });
+}
+
+window.filterTag=function(t){activeTag=activeTag===t?null:t;buildTagCloud();renderArticles();};
+
+function openModal(post){
+  document.getElementById('modalCategory').textContent=post.category;
+  document.getElementById('modalTitle').textContent=post.title;
+  document.getElementById('modalDate').textContent=fmt(post.date);
+  document.getElementById('modalLink').href=post.link;
+  document.getElementById('modalSubcats').innerHTML=post.subcategories.map(s=>`<span class="subcat-badge">${s}</span>`).join('');
+  document.getElementById('modalBody').textContent=post.content;
+  document.getElementById('modalTags').innerHTML=post.tags.map(t=>`<span class="tag-pill" onclick="closeModal();filterTag('${t}')">${t}</span>`).join('');
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('modalClose').onclick=closeModal;
+document.getElementById('modalOverlay').onclick=e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+let st;
+document.getElementById('searchInput').addEventListener('input',e=>{
+  clearTimeout(st);st=setTimeout(()=>{searchQuery=e.target.value;renderArticles();},250);
+});
+
+init();
+</script>
+</body>
+</html>
