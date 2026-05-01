@@ -94,8 +94,8 @@
     .site-eyebrow::after { background:linear-gradient(to right,var(--gold),transparent); }
     .site-title {
       font-family:'Amiri',serif;
-      font-size:clamp(54px,10vw,108px);
-      font-weight:700;line-height:1;color:var(--text-primary);
+      font-size:clamp(36px,10vw,108px);
+      font-weight:700;line-height:1.1;color:var(--text-primary);
       opacity:0;animation:slideUp 0.9s 0.35s cubic-bezier(0.23,1,0.32,1) forwards;
     }
     .site-title em {
@@ -143,6 +143,10 @@
       border-bottom:1px solid var(--glass-border);
       padding:14px 40px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
     }
+    .controls-inner { display:flex; align-items:center; gap:14px; flex:1; flex-wrap:wrap; width:100%; min-width:0; }
+    .filters-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; min-width:0; }
+    .filters-label { font-family:'Cairo',sans-serif;font-size:13px;color:var(--text-secondary);font-weight:700; white-space:nowrap; }
+    
     .search-wrap { position:relative;flex:1;min-width:200px;max-width:340px; }
     .search-icon {
       position:absolute;right:14px;top:50%;transform:translateY(-50%);
@@ -387,11 +391,34 @@
       .masthead-main{padding:48px 16px 44px;}
     }
     @media(max-width:600px){
+      .modal-overlay { padding: 0; align-items: flex-end; }
+      .modal { border-radius: 24px 24px 0 0; margin: 20px 0 0; border-left: none; border-right: none; border-bottom: none; transform: translateY(100%); }
+      .modal-overlay.open .modal { transform: translateY(0); }
       .modal-content{padding:22px 18px 28px;}
+      .modal-title { font-size: clamp(22px, 6vw, 24px); line-height: 1.35; }
+      .modal-close { width: 44px; height: 44px; font-size: 20px; border-radius: 10px; }
       .card-body{padding:12px 16px 16px;}
+      .card-title { font-size: 18px; }
       .card-header{padding:16px 16px 0;}
       .card-footer{padding:11px 16px;}
-      .sidebar{flex-direction:column;}
+      .sidebar{flex-direction:column; gap: 14px;}
+      .category-list li { padding: 14px 4px; }
+      .tag-cloud-pill { padding: 8px 16px; font-size: 13px; }
+      .tag-pill { padding: 5px 12px; font-size: 12px; }
+      .controls-bar { flex-direction: column; align-items: stretch; padding: 12px 16px 8px; gap: 12px; }
+      .controls-inner { flex-direction: column; align-items: stretch; gap: 12px; }
+      .search-wrap { max-width: 100%; width: 100%; flex: none; }
+      .search-input { height: 44px; font-size: 15px; }
+      .filters-row { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px; box-sizing: border-box; }
+      .filters-row::-webkit-scrollbar { display: none; }
+      .chip { flex-shrink: 0; height: 38px; display: inline-flex; align-items: center; justify-content: center; }
+      .results-count { position: absolute; left: 16px; top: -24px; font-size: 12px; opacity: 0; /* hidden securely without breaking flow */ pointer-events: none; }
+      .masthead-top { padding: 12px 0; }
+      .masthead-main { padding: 32px 10px 32px; }
+      .site-title { margin-bottom: 8px; }
+      .hero-badges { margin-top: 24px; }
+      .hero-badge { padding: 8px 18px; font-size: 13px; }
+      .telegram-btn { padding: 12px 24px; width: 100%; justify-content: center; }
     }
     ::-webkit-scrollbar{width:5px;height:5px;}
     ::-webkit-scrollbar-track{background:var(--bg-deep);}
@@ -430,13 +457,13 @@
 </header>
 
 <div class="controls-bar">
-  <div style="display:flex; align-items:center; gap:14px; flex:1; flex-wrap:wrap;">
+  <div class="controls-inner">
     <div class="search-wrap">
       <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input class="search-input" id="searchInput" type="search" placeholder="ابحث في المقالات..." />
     </div>
-    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-      <span style="font-family:'Cairo',sans-serif;font-size:13px;color:var(--text-secondary);font-weight:700;">تصفية:</span>
+    <div class="filters-row">
+      <span class="filters-label">تصفية:</span>
       <button class="chip" id="advancedCatBtn">التصنيفات</button>
       <button class="chip" id="advancedDateBtn">التاريخ</button>
       <button class="chip" id="advancedTagsBtn">الوسوم</button>
