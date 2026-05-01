@@ -392,7 +392,7 @@
     }
     @media(max-width:600px){
       .modal-overlay { padding: 0; align-items: flex-end; }
-      .modal { border-radius: 24px 24px 0 0; margin: 20px 0 0; border-left: none; border-right: none; border-bottom: none; transform: translateY(100%); }
+      .modal { border-radius: 24px 24px 0 0; margin: 20px 0 0; border-left: none; border-right: none; border-bottom: none; transform: translateY(100%); max-height: calc(100vh - 20px); max-height: calc(100dvh - 20px); overflow-y: auto; }
       .modal-overlay.open .modal { transform: translateY(0); }
       .modal-content{padding:22px 18px 28px;}
       .modal-title { font-size: clamp(22px, 6vw, 24px); line-height: 1.35; }
